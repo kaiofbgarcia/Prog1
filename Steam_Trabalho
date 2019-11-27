@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,14 +26,15 @@ char *MainMenu[]={
 FILE *fp; /*variável global pois é útil ao longo do programa*/
 
 typedef struct{
-    char nome[30+1];
-    char plataforma[30+1];
-    char tipo[30+1];
+    char nome[30];
+    char plataforma[30];
+    char tipo[30];
     float preco;
     float nota;
     int ano;
-    char fabricante[30+1];
+    char fabricante[30];
     int rank;
+    int codigo;
     char Status; /* '*' indica que o registro está apagado*/
 }Jogo;
 
@@ -46,10 +46,11 @@ void Ler_Jogo(Jogo *p){
     printf("Plataforma: "); gets(p->plataforma);
     printf("Tipo de jogo: "); gets(p->tipo);
     printf("Fabricante: "); gets(p->fabricante);
-    printf("Preco: "); scanf("%f",&p->preco);
+    printf("Preco: R$"); scanf("%f",&p->preco);
     printf("Nota: "); scanf("%f",&p->nota);
     printf("Ano: "); scanf("%d",&p->ano);
     printf("Rank: "); scanf("%d",&p->rank);
+    printf("Numero de Registro: "); scanf("%d",&p->codigo);
     p->Status = ' ';
     fflush(stdin);
 }
@@ -61,10 +62,11 @@ void Mostrar_Jogo(Jogo p){
     printf("Plataforma: %s\n", p.plataforma);
     printf("Tipo de jogo: %s\n", p.tipo);
     printf("Fabricante: %s\n", p.fabricante);
-    printf("Preco: %f\n", p.preco);
-    printf("Nota: %f\n", p.nota);
+    printf("Preco: R$%.2f\n", p.preco);
+    printf("Nota: %.2f\n", p.nota);
     printf("Ano: %d\n", p.ano);
     printf("Rank: %d\n", p.rank);
+    printf("Numero de Registro: %d\n\n", p.codigo);
 }
 
 /*Adiciona uma jogo ao arquivo*/
@@ -202,13 +204,27 @@ void Listar(){
     Mensagem("\n\n Pressione <Enter> para continuar .  .  ."); /*No fim da listagem*/
 }
 
-void Pesquisar_Nome(char *s){
-    Jogo reg;
-    rewind(fp);
+void Pesquisar_Jogo(){
+    Jogo x;
+    long int n_reg;
+    printf("Qual o numero do registro: ");
+    scanf("%ld", & n_reg); fflush(stdin);
+    if(fseek(fp, (n_reg-1)*sizeof(Jogo), SEEK_SET)!=0){
+        Mensagem("Registro inexistente ou problemas no posicionamento!!!");
+        return;
+    }
+    if(fread(&x, sizeof(Jogo), 1, fp)!= 1){
+        Mensagem("Problemas na leitura do registro!!!");
+        return;
+    }
 
-    while(fread(&reg, sizeof(Jogo), 1, fp))
-        if(reg.Status!='*' && strstr(reg.nome, s))
-            Mostrar_Jogo(reg);
+    if(x.Status=='*'){
+        Mensagem("Um registro apagado não pode ser consultado!!! \n\n");
+        return;
+    }
+
+    printf("\n\n Dados Atuais \n\n");
+    Mostrar_Jogo(x);
 
     Mensagem("\n\n Pressione <Enter> para continuar .  .  ."); /*No fim da listagem*/
 }
@@ -225,11 +241,7 @@ int main(int argc, char *argv[]) {
             case APAGAR_JOGO: Apagar_Jogo(); break;
             case LISTAR_JOGO: Listar(); break;
             case PESQUISAR_JOGO:{
-                char string[30];
-                printf("Qual o jogo a procurar: ");
-                fgets(string, 30, stdin);
-                //gets(string); fflush(stdin);
-                Pesquisar_Nome(string);
+                Pesquisar_Jogo();
                 }
 
         }
