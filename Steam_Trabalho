@@ -4,7 +4,7 @@
 #include <conio.h>
 #include <ctype.h>
 
-#define ARQ "Dados.dat" /* arquivo com os dados*/
+#define ARQ "Dados.dat"
 #define CADASTRAR_JOGO '1'
 #define ALTERAR_JOGO '2'
 #define APAGAR_JOGO '3'
@@ -20,10 +20,10 @@ char *MainMenu[]={
     "4. Listar registros",
     "5. Pesquisar",
     "0. Sair",
-    NULL /* ACABARAM AS OPÇÕES*/
+    NULL 
 };
 
-FILE *fp; /*variável global pois é útil ao longo do programa*/
+FILE *fp; 
 
 typedef struct{
     char nome[30];
@@ -84,9 +84,7 @@ void Mensagem(char *msg){
 
 
 
-/*Verificar se o arquivo já existe. Se não existir, ele é criado
-se já existir, abre-o em modo de leitura e escrita (r+b)
-*/
+/*Verificar se o arquivo já existe. Se não existir, ele é criado*/
 void Inic(){
     fp= fopen(ARQ, "r+b"); //tentar abrir
     if(fp==NULL){
@@ -98,10 +96,7 @@ void Inic(){
     }
 }
 
-/* Faz um menu simples com as opções do vetor de strings.
-seleciona a opção, usando o primeiro caracter de cada string.
-devolve o primeiro caracter da opção.
-*/
+
 char Menu(char *opcoes[]){
     int i;
     char ch;
@@ -240,13 +235,8 @@ int main(int argc, char *argv[]) {
             case ALTERAR_JOGO: Alterar_Jogo(); break;
             case APAGAR_JOGO: Apagar_Jogo(); break;
             case LISTAR_JOGO: Listar(); break;
-            case PESQUISAR_JOGO:{
-                Pesquisar_Jogo();
-                }
-
+            case PESQUISAR_JOGO: Pesquisar_Jogo();
         }
-
     }
-
     return 0;
 }
